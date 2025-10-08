@@ -1,10 +1,4 @@
-############################################
-# LEIA AQUI                                
-############################################
-# Criado por GUILHERME LAZAROTTO           
-# Youtube: www.youtube.com/@guilherme_laz  
-# Curso completo: www.curson8n.com.br      
-############################################
+version: "3.8"
 
 services:
   redis:
@@ -16,6 +10,7 @@ services:
       REDIS_PASSWORD: default
     ports:
       - "6379:6379"
+    networks: [internal]
 
   postgres:
     image: postgres:latest
@@ -28,8 +23,8 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks: [internal]
 
-  services:
   waha:
     image: devlikeapro/waha:latest
     platform: linux/amd64
@@ -37,14 +32,13 @@ services:
       WHATSAPP_HOOK_URL: http://host.docker.internal:5678/webhook/webhook
       WHATSAPP_DEFAULT_ENGINE: GOWS
       WHATSAPP_HOOK_EVENTS: message
-      WAHA_BASE_URL: http://waha:3000       # para o media.url vir correto
+      WAHA_BASE_URL: http://waha:3000
     volumes:
       - waha_sessions:/app/.sessions
-      - waha_media:/tmp/whatsapp-files      # <-- ALTERA para este path
+      - waha_media:/tmp/whatsapp-files
     ports:
       - "3000:3000"
-    networks:
-      - internal
+    networks: [internal]
 
   n8n:
     image: n8nio/n8n:latest
@@ -59,14 +53,14 @@ services:
       - n8n_data:/home/node/.n8n
     ports:
       - "5678:5678"
-    networks:
-      - internal
+    networks: [internal]
 
 networks:
   internal:
     driver: bridge
 
 volumes:
+  pgdata:
   waha_sessions:
   waha_media:
   n8n_data:
